@@ -26,10 +26,10 @@ CloudMigrate Pro is a cloud-based solution designed for seamless migration of ap
 - Pylint (for linting)
 
 ### Installation
-\`TBD``bash
+\`TBD`
 git clone https://github.com/0xEB0din/AetherJackal.git
 cd cloudmigrate-pro
-
+`bash
 ### Running the Application
 \``TBD`bash
 # Instructions for running the application, including Docker commands
