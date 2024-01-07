@@ -28,7 +28,7 @@ CloudMigrate Pro is a cloud-based solution designed for seamless migration of ap
 ### Installation
 ```sh
 git clone https://github.com/0xEB0din/AetherJackal.git
-cd cloudmigrate-pro
+cd AetherJackal
 ```
 ### Running the Application
 ```sh
