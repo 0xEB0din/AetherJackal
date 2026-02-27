@@ -5,7 +5,7 @@ description = "CloudMigrate Pro — cloud migration planning API"
 requires-python = ">=3.12"
 license = {text = "MIT"}
 authors = [
-    {name = "Ahmed Ebrahim"}
+    {name = "EDGE"}
 ]
 
 [tool.pylint.messages_control]

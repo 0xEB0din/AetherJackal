@@ -10,7 +10,7 @@ RUN npm run build
 # ---------- Stage 2: Python API + static assets ----------
 FROM python:3.12-slim
 
-LABEL maintainer="Ahmed Ebrahim <ebrahimson@pm.me>"
+LABEL maintainer="EDGE"
 
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 

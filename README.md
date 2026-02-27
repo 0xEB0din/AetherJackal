@@ -276,6 +276,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ## Contact
 
-**Ahmed Ebrahim** — [@0xEB0din](https://twitter.com/0xEB0din)
+**EDGE** — [@0xEB0din](https://twitter.com/0xEB0din)
 
 Project: [github.com/0xEB0din/AetherJackal](https://github.com/0xEB0din/AetherJackal)
