@@ -1,0 +1,31 @@
+[project]
+name = "cloudmigrate-pro-backend"
+version = "0.1.0"
+description = "CloudMigrate Pro — cloud migration planning API"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+    {name = "Ahmed Ebrahim"}
+]
+
+[tool.pylint.messages_control]
+disable = [
+    "C0114",  # missing-module-docstring
+    "C0115",  # missing-class-docstring
+    "C0116",  # missing-function-docstring
+]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["."]
+omit = ["tests/*", "venv/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 60
