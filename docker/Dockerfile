@@ -8,7 +8,7 @@ COPY frontend/ .
 RUN npm run build
 
 # ---------- Stage 2: Python API + static assets ----------
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 LABEL maintainer="EDGE"
 
