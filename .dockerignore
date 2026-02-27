@@ -1,0 +1,47 @@
+.git
+.github
+.gitignore
+.editorconfig
+.env
+.env.*
+.vscode
+.idea
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+.eggs
+venv
+.venv
+.pytest_cache
+htmlcov
+.coverage
+coverage.xml
+
+# Node
+node_modules
+frontend/node_modules
+
+# Documentation
+*.md
+!README.md
+LICENSE
+ROADMAP.md
+FEATURES.md
+CHANGELOG.md
+
+# CI/CD
+ci-cd/
+.pre-commit-config.yaml
+
+# Tests
+backend/tests
+test-results.xml
+
+# Serverless
+.serverless
+
+# Docker (prevent recursive copy)
+docker-compose.yml
