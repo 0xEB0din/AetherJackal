@@ -1,6 +1,8 @@
-# CloudMigrate Pro
+# AetherJackal — CloudMigrate Pro
 
 A full-stack cloud migration platform that helps teams plan, execute, and monitor the migration of on-premises workloads to AWS serverless infrastructure.
+
+> **AetherJackal** is the project/repository name. **CloudMigrate Pro** is the product name.
 
 Built with **Flask** (Python) on the backend and **React** on the frontend, containerized with **Docker**, and deployable through a **Jenkins** CI/CD pipeline or the **Serverless Framework**.
 
