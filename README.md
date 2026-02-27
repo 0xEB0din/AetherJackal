@@ -173,6 +173,81 @@ npx serverless deploy --stage prod --region us-east-1
 
 This provisions a DynamoDB table, Lambda function, and HTTP API Gateway endpoint.
 
+## Current Limitations
+
+This is a **Phase 1 prototype**. Be aware of what it can and cannot do today:
+
+| Limitation | Detail |
+|---|---|
+| **Demo data only** | Resource discovery returns a hardcoded list of 8 AWS resources. There is no live boto3 integration — no actual AWS account is queried. |
+| **Flat-file storage** | Migration state is persisted to a JSON file on disk (`/tmp/migrations`). This means data is lost on container restart, there is no concurrent write safety, and it does not scale beyond a single process. |
+| **Hardcoded cost model** | Cost estimates use static hourly rates (e.g., t3.medium = $0.0416/hr) and fixed savings percentages per strategy. These do not reflect real AWS pricing, reserved instance discounts, savings plans, or regional price variation. |
+| **No authentication** | The API has zero auth. Anyone with network access can create, modify, or delete migrations. There is no concept of users, roles, or tenants. |
+| **No real migration execution** | The platform tracks migration *status* but does not actually move workloads. Status transitions are manual — a human updates the status field via API. |
+| **Single-region, single-account** | The demo inventory is locked to `us-east-1` in a single AWS account. Multi-region and multi-account discovery is not implemented. |
+| **No dependency mapping** | Resources are treated as independent items. There is no understanding of which EC2 instance talks to which RDS database or which services depend on each other. |
+| **No rollback automation** | The `rollback_available` flag is set on completion, but no actual rollback logic exists. |
+
+## Tradeoffs
+
+Decisions made in Phase 1 and their consequences:
+
+- **Flask + JSON files over a real database** — Fastest path to a working prototype, but prevents concurrent access and any real production use. Switching to DynamoDB or PostgreSQL is required before deploying for real teams.
+- **Hardcoded demo inventory over boto3** — Removes the need for AWS credentials during development, but means the platform cannot demonstrate real value until live discovery is wired in.
+- **Monolithic API over microservices** — Simpler to develop and deploy, but migration execution, resource discovery, and analytics will eventually need independent scaling.
+- **Client-side routing only** — No server-side rendering or static pre-rendering. Fine for an internal tool, but limits SEO and initial load performance if this ever becomes a public product.
+- **No WebSocket or SSE** — Dashboard data is fetched on page load. There are no real-time updates when migration status changes. Users must refresh to see new data.
+
+## Gaps (What's Missing to Be Production-Ready)
+
+These are not "nice-to-haves" — they are blockers for any real deployment:
+
+1. **Authentication and authorization** — JWT or OAuth2 with role-based access control (admin, operator, viewer)
+2. **Real database** — DynamoDB, PostgreSQL, or similar with proper migrations and backup
+3. **Live resource discovery** — boto3 integration with assume-role support for cross-account scanning
+4. **Real AWS pricing** — Pull from the AWS Price List API or Cost Explorer, factoring in RIs, savings plans, and spot pricing
+5. **Input rate limiting** — No protection against API abuse; any client can flood the endpoints
+6. **Request logging and audit trail** — No structured logging of who did what and when
+7. **Error handling in the frontend** — API failures are not surfaced clearly to the user
+8. **Migration validation** — No pre-flight checks before starting a migration (permissions, capacity, connectivity)
+9. **Data encryption** — State file is written as plaintext JSON; no encryption at rest
+10. **HTTPS enforcement** — The app serves over HTTP; TLS termination is left entirely to the deployment layer
+
+## Security Considerations
+
+Current security posture and what needs to change:
+
+| Area | Current State | Required |
+|---|---|---|
+| **Authentication** | None | JWT/OAuth2 with token expiry and refresh |
+| **Authorization** | None | RBAC — at minimum admin, operator, viewer roles |
+| **Input validation** | Marshmallow schemas validate shape/types | Add field-level sanitization, length limits, and reject unexpected fields |
+| **CORS** | Open (`*`) via Flask-CORS | Restrict to known frontend origins |
+| **Secrets management** | No secrets in use yet | When AWS credentials are added, use IAM roles (not hardcoded keys), or a secrets manager |
+| **Data at rest** | Plaintext JSON on disk | Encrypt state files; in production use a database with encryption enabled |
+| **Data in transit** | HTTP only | Enforce HTTPS with TLS 1.2+ at the load balancer or API Gateway |
+| **Rate limiting** | None | Add per-IP and per-endpoint rate limits (e.g., Flask-Limiter) |
+| **Dependency security** | No scanning | Add `pip audit` and `npm audit` to CI pipeline |
+| **Container security** | Non-root user in Dockerfile | Add read-only filesystem, drop all capabilities, scan images with Trivy or Snyk |
+| **API versioning** | `/api/v1` prefix exists | Maintain versioning discipline as the API evolves |
+
+## Future Improvements
+
+See [ROADMAP.md](ROADMAP.md) for the full plan. The features below are what would make CloudMigrate Pro genuinely different from existing tools like AWS Migration Hub, CloudEndure, or Cloudamize:
+
+### What Would Actually Make This Special
+
+- **Automatic dependency mapping** — Analyze VPC flow logs, security groups, and CloudWatch metrics to build a dependency graph showing which resources talk to each other. This is the single biggest pain point in real migrations and almost no open-source tool does it well.
+- **AI-driven strategy recommendations** — Use resource metadata, usage patterns, and cost data to recommend the optimal migration strategy per workload instead of making users guess.
+- **Migration risk scoring** — Assign a risk score (low/medium/high/critical) to each planned migration based on resource complexity, dependency count, data volume, and downtime tolerance.
+- **Infrastructure-as-Code generation** — After selecting a strategy, auto-generate Terraform or CloudFormation templates for the target architecture so teams can review and apply infrastructure changes directly.
+- **Runbook generation** — Auto-produce step-by-step migration runbooks (pre-migration checks, execution steps, validation, rollback plan) customized to each workload and strategy.
+- **Real-time migration execution with rollback** — Actually execute migrations (EC2 rehost via AMI copy, RDS via snapshot-restore, S3 via cross-region replication) with automatic rollback on failure.
+- **Multi-cloud support with cost normalization** — Discover and compare workloads across AWS, Azure, and GCP with normalized cost metrics so teams can make cloud-agnostic decisions.
+- **Slack/Teams integration with approval workflows** — Notify channels on status changes and require explicit approval (thumbs-up reaction or slash command) before proceeding to the next migration phase.
+- **Before/after cost actuals** — After migration completes, pull real Cost Explorer data to compare projected savings vs. actual savings and surface where estimates were wrong.
+- **Compliance templates** — Pre-built migration checklists for SOC 2, HIPAA, PCI-DSS, and FedRAMP that enforce required steps (data classification, encryption verification, access review) before a migration can proceed.
+
 ## Roadmap
 
 See [ROADMAP.md](ROADMAP.md) for planned features and milestones.
