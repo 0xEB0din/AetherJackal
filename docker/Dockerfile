@@ -1,5 +1,5 @@
 # ---------- Stage 1: build the React frontend ----------
-FROM node:25-alpine AS frontend-build
+FROM node:26-alpine AS frontend-build
 
 WORKDIR /build
 COPY frontend/package.json frontend/package-lock.json* ./
